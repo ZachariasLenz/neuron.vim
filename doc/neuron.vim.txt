@@ -1,34 +1,54 @@
 *neuron.vim.txt* Manage your Zettelkasten.
 
-Authors: fiatjaf <https://fiatjaf.alhur.es/>, chiefnoah <https://packetlost.dev>
+Author: Zacharias Lenz <zacharias.lenz@pm.me>
 
 INTRODUCTION                                    *neuron.vim*
 
-neuron.vim manages your zettelkasten. You can search, create, navigate and open your zettels using fzf and neuron.
+neuron.vim manages your zettelkasten. You can search, create, navigate and
+open your zettels using fzf and neuron.
 
 
 CONFIGURATION                                   *neuron.vim-configuration*
-g:CustomNeuronIDGenerator   Hook function to define your own strategy for generating the
-                            IDs of new Zettel notes. Accepts a string 'title' parameter,
-                            and should return a string. If left undefined, neuron.vim will
+g:CustomNeuronIDGenerator   Hook function to define your own strategy for
+                            generating the IDs of new Zettel notes. Accepts a
+                            string 'title' parameter, and should return a
+                            string. If left undefined, neuron.vim will
                             generate random IDs for new notes. Default: >
                             undefined
 
-g:neuron_backlinks_size     Size in characters used for backlinks window. Default: >
+g:neuron_backlinks_size     Size in characters used for backlinks window.
+                            Default: >
                             let g:neuron_backlinks_size = 40
 
-g:neuron_backlinks_vsplit   If this is set to 1, backlinks will be shown in a vertical
-                            split. Otherwise a horizontal split will be user. Default: >
+g:neuron_backlinks_vsplit   If this is set to 1, backlinks will be shown in a
+                            vertical split. Otherwise a horizontal split will
+                            be user. Default: >
                             let g:neuron_backlinks_vsplit = 1
 
 g:neuron_backlinks_vsplit_right
-                            If this is set to 1, backlinks will be shown in a vertical
-                            split on the right, otherwise they will be on the left.
-                            Default: >
+                            If this is set to 1, backlinks will be shown in a
+                            vertical split on the right, otherwise they will
+                            be on the left. Default: >
                             let g:neuron_backlinks_vsplit_right = 1
 
-g:neuron_dir                Zettelkasten location. Default: >
-                            let g:neuron_dir = getcwd()
+g:neuron_daemon_cmd         The command to execute in order to start the
+                            neuron daemon. Default: >
+                            let g:neuron_daemon_cmd = 'neuron gen -wS --pretty-urls'
+
+g:neuron_daemon_run         Whether to automatically launch the neuron daemon.
+                            Default: >
+                            let g:neuron_daemon_run = 1
+
+g:neuron_dirs_to_check      The list of subdirectories to search for zettels.
+                            The first directory from this list that contains
+                            files with the *g:neuron_extension* extension will
+                            be assumed to be the zettel directory. This
+                            setting is useful if you store your zettels in a
+                            subdirectory and not the *g:neuron_dir* that
+                            contains the neuron.dhall file. Set it to any
+                            empty list if you always have your notes in the
+                            root directory. Default: >
+                            let g:neuron_dirs_to_check = ['notes', 'zettels']
 
 g:neuron_executable         Path to neuron. Default >
                             let g:neuron_executable = system('which neuron | tr -d "\n"')
@@ -37,20 +57,27 @@ g:neuron_extension          Zettel file extension. Default: >
                             let g:neuron_extension = '.md'
 
 
-g:neuron_fullscreen_search  If fzf searches are to occupy the entire screen. Default: >
+g:neuron_fullscreen_search  If fzf searches are to occupy the entire screen.
+                            Default: >
                             let g:neuron_fullscreen_search = 0
 
 g:neuron_fzf_options        Change the fzf parameters. Note that the default
-                            options are required for proper functioning when filtering of
-                            zettels. Default: >
+                            options are required for proper functioning when
+                            filtering of zettels. Default: >
                             let g:neuron_fzf_options = ['-d',':','--with-nth','2']
 
-g:neuron_inline_backlinks   If set to 1, then inline backlinks will be shown at the
-                            top of the buffer. Default: >
+g:neuron_inline_backlinks   If set to 1, then inline backlinks will be shown
+                            at the top of the buffer. Default: >
                             let g:neuron_inline_backlinks = 1
 
-g:neuron_no_mappings        If this is set to 1 no mappings will be created. Default: >
+g:neuron_no_mappings        If this is set to 1 no mappings will be created.
+                            Default: >
                             let g:neuron_no_mappings = 0
+
+g:neuron_search_backend     The search backend to use for content searches.
+                            Can be 'ag' for silver-searcher or 'rg' for
+                            ripgrep. Default: >
+                            let g:neuron_search_backend = 'ag'
 
 g:neuron_tags_name          The key to use for specifying tags. Default: >
                             let g:neuron_tags_name = 'tags'
@@ -73,32 +100,108 @@ g:neuron_tags_style         The style of tags used when updating and inserting
 
 
 MAPPINGS                                        *neuron.vim-mappings*
+The following <Plug> mappings are available:
+
+<Plug>NeuronAddTagNew                   Tag the current zettel with a newly
+                                        created tag.
+
+<Plug>NeuronAddTagSearch                Search for an already existing tag and
+                                        tag the current zettel with it.
+
+<Plug>NeuronEditZettelPrevious          Open the previously visited zettel in
+                                        a new buffer.
+
+<Plug>NeuronEditZettelUnderCursor       Open the zettel under the cursor in a
+                                        new buffer.
+
+<Plug>NeuronHistoryNext                 Open the next zettel in the visit
+                                        history.
+
+<Plug>NeuronHistoryPrevious             Open the previous zettel in the visit
+                                        history.
+
+<Plug>NeuronInsertFolgezettelSearch     Search for a zettel by title and
+                                        insert a folgezettel link to it in the
+                                        current one.
+
+<Plug>NeuronInsertFolgezettelPrevious   Insert a folgezettel link to the
+                                        previously visited zettel in the
+                                        current one.
+
+<Plug>NeuronInsertLinkSearch            Search for a zettel by title and
+                                        insert a link to it in the current one.
+
+<Plug>NeuronInsertLinkPrevious          Insert a link to the previously
+                                        visited zettel in the current one.
+
+<Plug>NeuronNewFolgezettel              Create a new zettel and insert it as
+                                        a folgezettel in the current one.
+
+<Plug>NeuronNewFolgezettelFromCword     Create a new zettel and insert it as
+                                        a folgezettel in the current one,
+                                        using the word under the cursor as
+                                        its title.
+
+<Plug>NeuronNewFolgezettelFromVisual    Create a new zettel and insert it as a
+                                        folgezettel in the current one, using
+                                        the visual selection as its title.
+
+<Plug>NeuronNewZettel                   Create a new zettel.
+
+<Plug>NeuronPreviewZettel               Open the compiled HTML of the current
+                                        zettel. This requires that neuron
+                                        daemon (i.e. the command
+                                        'neuron gen -S') is running.
+
+<Plug>NeuronRefreshCache                Refresh neuron's cache.
+
+<Plug>NeuronSearchBacklinks             Search for zettels by title which link
+                                        to the current one.
+
+<Plug>NeuronSearchByTag                 Search for zettels by title with a
+                                        given tag.
+
+<Plug>NeuronSearchContent               Search through the content of all
+                                        zettels.
+
+<Plug>NeuronSearchContentUnderCursor    Search through the content of all
+                                        zettel for the word under the cursor.
+
+<Plug>NeuronSearchTitles                Search for zettels by title.
+
+<Plug>NeuronToggleBacklinks             Toggle the display of the number of
+                                        backlines.
+
+Default mappings (only set if g:neuron_no_mappings = 0):
+
 >
-	nm gzn <Plug>EditZettelNew
-	nm gzN <Plug>EditZettelNewFromCword
-	vm gzN <esc><Plug>EditZettelNewFromVisual
-    nm gzc <Plug>NewZettel
-	nm gzr <Plug>NeuronRefreshCache
-	nm gzu <Plug>EditZettelLast
-	nm gzU :<C-U>call neuron#move_history(-1)<cr>
-	nm gzP :<C-U>call neuron#move_history(1)<cr>
-	nm gzz <Plug>EditZettelSelect
-	nm gzZ <Plug>EditZettelBacklink
-	nm gzo <Plug>EditZettelUnderCursor
-	nm gzs <Plug>EditZettelSearchContent
-	nm gzS <Plug>EditZettelSearchContentUnderCursor
-	nm gzl <Plug>InsertZettelLast
-	nm gzi <Plug>InsertZettelSelect
-	nm gzL :<C-U>call neuron#insert_zettel_last(1)<cr>
-	nm gzI :<C-U>call neuron#insert_zettel_select(1)<cr>
-	nm gzv <Plug>ToggleBacklinks
-	nm gzt <Plug>TagsAddNew
-	nm gzT <Plug>TagsAddSelect
-	nm gzts <Plug>TagsZettelSearch
+    nmap <leader>zT <Plug>NeuronAddTagNew
+    nmap <leader>zt <Plug>NeuronAddTagSearch
+    nmap <leader>zE <Plug>NeuronEditZettelPrevious
+    nmap <leader>ze <Plug>NeuronEditZettelUnderCursor
+    nmap <leader>z] <Plug>NeuronHistoryNext
+    nmap <leader>z[ <Plug>NeuronHistoryPrevious
+    nmap <leader>zi <Plug>NeuronInsertFolgezettelSearch
+    nmap <leader>zI <Plug>NeuronInsertFolgezettelPrevious
+    nmap <leader>zl <Plug>NeuronInsertLinkSearch
+    nmap <leader>zL <Plug>NeuronInsertLinkPrevious
+    nmap <leader>zf <Plug>NeuronNewFolgezettel
+    vmap <leader>zf <ESC><Plug>NeuronNewFolgezettelFromVisual
+    nmap <leader>zz <Plug>NeuronNewZettel
+    nmap <leader>zp <Plug>NeuronPreviewZettel
+    nmap <leader>zr <Plug>NeuronRefreshCache
+    nmap <leader>zb <Plug>NeuronSearchBacklinks
+    nmap <leader>zS <Plug>NeuronSearchByTag
+    nmap <leader>zc <Plug>NeuronSearchContent
+    nmap <leader>zC <Plug>NeuronSearchContentUnderCursor
+    nmap <leader>zs <Plug>NeuronSearchTitles
+    nmap <leader>zB <Plug>NeuronToggleBacklinks
+    inoremap <expr> <c-x><c-u> neuron#insert_zettel_complete(0)
+    inoremap <expr> <c-x><c-y> neuron#insert_zettel_complete(1)
 
 
 ABOUT                                           *neuron.vim-about*
 
-http://github.com/fiatjaf/neuron.vim
+http://github.com/ZachariasLenz/neuron.vim
 
 vim:tw=78:et:ft=help:norl:
