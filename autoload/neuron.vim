@@ -360,8 +360,11 @@ func! s:refresh_backlink_cache_for_zettel(id)
 endf
 
 func s:refresh_backlink_callback_nvim(id, data, event)
-    let l:decoded = json_decode(join(a:data))
-    call s:refresh_backlink_callback(l:decoded)
+    let l:data_str = join(a:data)
+    if l:data_str != ''
+        let l:decoded = json_decode(l:data_str)
+        call s:refresh_backlink_callback(l:decoded)
+    endif
 endf
 
 func! s:refresh_backlink_callback_vim(channel, data)
