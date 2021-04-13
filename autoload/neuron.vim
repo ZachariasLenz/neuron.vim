@@ -233,20 +233,18 @@ func! neuron#edit_zettel_under_cursor()
         return
     end
 
-    let l:zettel_id = trim(expand('<cword>'), "<>[]")
+    let l:prev = @p
+    execute 'normal! "pyi['
+    let l:zettel_id = @p
+    let @p = l:prev
+
     if util#is_zettelid_valid(l:zettel_id)
         call neuron#edit_zettel(l:zettel_id)
+        return 1
     else
-        let l:zettel_id = trim(expand('<cWORD>'), "<>[]")
-        if util#is_zettelid_valid(l:zettel_id)
-            call neuron#edit_zettel(l:zettel_id)
-        else
-            echo 'Word under cursor is not a known zettel!'
-            return 0
-        endif
+        echo 'Word under cursor is not a known zettel!'
+        return 0
     endif
-
-    return 1
 endf
 
 func! neuron#edit_zettel(zettel_id)
